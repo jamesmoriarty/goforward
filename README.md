@@ -1,5 +1,7 @@
 # Goforward
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/jamesmoriarty/goforward)](https://goreportcard.com/report/github.com/jamesmoriarty/goforward)
+
 Go forward proxy with rate limiting.
 
 ![Screenshot][1]
