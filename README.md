@@ -7,6 +7,7 @@ Go forward proxy with rate limiting.
 # Install
 
 ```
+go get -v github.com/jamesmoriarty/goforward
 go install github.com/jamesmoriarty/goforward
 ```
 
