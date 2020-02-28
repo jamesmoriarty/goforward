@@ -35,12 +35,15 @@ jobs:
           - os: 'macos-latest'
             goos: 'darwin'
             goarch: 'amd64'
+            ext: ''
           - os: 'ubuntu-16.04'
             goos: 'linux'
             goarch: 'amd64'
+            ext: ''
           - os: 'windows-latest'
             goos: 'windows'
             goarch: 'amd64'
+            ext: '.exe'
         go: [ '1.13' ]
   
     runs-on: ${{ matrix.target.os }}
@@ -54,7 +57,7 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
     
-      - run: go build -v -o ${{ matrix.target.goos }}-${{ matrix.target.goarch }} .
+      - run: go build -v -o ${{ matrix.target.goos }}-${{ matrix.target.goarch }}${{ matrix.target.ext }} .
         env:
           GOOS: ${{ matrix.target.goos }}
           GOARCH: ${{ matrix.target.goarch }}
@@ -76,6 +79,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.get_release_info.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./${{ matrix.target.goos }}-${{ matrix.target.goarch }}
-          asset_name: ${{ matrix.target.goos }}-${{ matrix.target.goarch }}
+          asset_path: ./${{ matrix.target.goos }}-${{ matrix.target.goarch }}${{ matrix.target.ext }}
+          asset_name: ${{ matrix.target.goos }}-${{ matrix.target.goarch }}${{ matrix.target.ext }}
           asset_content_type: application/zip
