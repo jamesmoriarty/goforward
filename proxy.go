@@ -8,7 +8,6 @@ import (
 	"code.cloudfoundry.org/bytefmt"
 	"context"
 	"crypto/tls"
-	"flag"
 	"github.com/juju/ratelimit"
 	log "github.com/sirupsen/logrus"
 	"io"
@@ -16,25 +15,6 @@ import (
 	"net/http"
 	"time"
 )
-
-type RateLimitedConn struct {
-	net.Conn
-	*ratelimit.Bucket
-}
-
-func (wrap RateLimitedConn) Read(b []byte) (n int, err error) {
-	written, err := wrap.Conn.Read(b)
-
-	wrap.Bucket.Wait(int64(written))
-
-	return written, err
-}
-
-func (wrap RateLimitedConn) Write(b []byte) (n int, err error) {
-	wrap.Bucket.Wait(int64(len(b)))
-
-	return wrap.Conn.Write(b)
-}
 
 func handleTunneling(w http.ResponseWriter, r *http.Request, bucket *ratelimit.Bucket) {
 	conn, err := net.DialTimeout("tcp", r.Host, 10*time.Second)
@@ -113,24 +93,7 @@ func copyHeader(dst, src http.Header) {
 	}
 }
 
-func main() {
-	log.SetFormatter(&log.TextFormatter{ForceColors: true})
-
-	var proto string
-	flag.StringVar(&proto, "proto", "http", "Proxy protocol")
-
-	var port string
-	flag.StringVar(&port, "port", "8888", "Proxy listen port")
-
-	var rate int
-	flag.IntVar(&rate, "rate", 512*1024, "Proxy bandwidth ratelimit")
-
-	flag.Parse()
-
-	if proto != "http" {
-		log.Fatal("Protocol must be http")
-	}
-
+func proxy(proto string, port string, rate int) {
 	log.Info("Goforward listening on :" + port + " with ratelimit " + bytefmt.ByteSize(uint64(rate)))
 
 	bucket := ratelimit.NewBucketWithRate(float64(rate), int64(rate))
