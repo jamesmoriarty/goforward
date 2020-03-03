@@ -6,6 +6,10 @@ Go forward proxy with rate limiting.
 
 ![Screenshot][1]
 
+# Download
+
+Releases can be downloaded from [here][3].
+
 # Install
 
 ```
