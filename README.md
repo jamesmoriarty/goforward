@@ -28,8 +28,6 @@ go install github.com/jamesmoriarty/goforward
 Usage of .\goforward.exe:
   -port string
         Proxy listen port (default "8888")
-  -proto string
-        Proxy protocol (default "http")
   -rate int
         Proxy bandwidth ratelimit (default 524288)
 ```
