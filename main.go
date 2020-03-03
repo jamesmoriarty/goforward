@@ -2,10 +2,10 @@ package main
 
 import (
 	"flag"
+	log "github.com/sirupsen/logrus"
 	"os"
 	"os/signal"
-    "syscall"
-	log "github.com/sirupsen/logrus"
+	"syscall"
 )
 
 func main() {

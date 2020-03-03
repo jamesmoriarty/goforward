@@ -1,19 +1,19 @@
 package main
 
 import (
-	"net/http"
-	"testing"
-	"net/url"
 	"io/ioutil"
+	"net/http"
+	"net/url"
+	"testing"
 	"time"
 )
 
 func withStubHTTPServer(port string, directory string, f func()) {
 	server := &http.Server{
-		Addr: ":" + port,
+		Addr:    ":" + port,
 		Handler: http.FileServer(http.Dir(directory)),
 	}
-	
+
 	go server.ListenAndServe()
 
 	f()
@@ -22,15 +22,15 @@ func withStubHTTPServer(port string, directory string, f func()) {
 }
 
 type benchmark struct {
-	Rate int
+	Rate        int
 	DurationMin float64
 	DurationMax float64
 }
 
 func TestBenchmarks(t *testing.T) {
-	benchmarks := []benchmark {
-		benchmark {
-			Rate: 512*1024,
+	benchmarks := []benchmark{
+		{
+			Rate:        512 * 1024,
 			DurationMin: 12,
 			DurationMax: 14,
 		},
