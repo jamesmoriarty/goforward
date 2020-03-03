@@ -93,7 +93,7 @@ func copyHeader(dst, src http.Header) {
 	}
 }
 
-func proxy(proto string, port string, rate int) {
+func proxy(port string, rate int, done <-chan bool) {
 	log.Info("Goforward listening on :" + port + " with ratelimit " + bytefmt.ByteSize(uint64(rate)))
 
 	bucket := ratelimit.NewBucketWithRate(float64(rate), int64(rate))
@@ -113,7 +113,11 @@ func proxy(proto string, port string, rate int) {
 		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler)),
 	}
 
-	if proto == "http" {
-		log.Fatal(server.ListenAndServe())
-	}
+	go server.ListenAndServe()
+
+	<-done
+
+	log.Info("Exiting Goforward")
+
+	server.Close()
 }

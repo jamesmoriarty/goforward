@@ -9,11 +9,16 @@ import (
 )
 
 func withStubHTTPServer(port string, directory string, f func()) {
-	http.Handle("/", http.FileServer(http.Dir(directory)))
+	server := &http.Server{
+		Addr: ":" + port,
+		Handler: http.FileServer(http.Dir(directory)),
+	}
 	
-	go http.ListenAndServe(":"+port, nil)
+	go server.ListenAndServe()
 
 	f()
+
+	server.Close()
 }
 
 type benchmark struct {
@@ -32,13 +37,18 @@ func TestBenchmarks(t *testing.T) {
 	}
 
 	withStubHTTPServer("8080", ".", func() {
-		for _, b := range benchmarks {
-		
-			go proxy("http", "8888", b.Rate)
+		done := make(chan bool, 1)
 
-			proxyURL, err := url.Parse("http://127.0.0.1:8888")
+		for _, b := range benchmarks {
+			go proxy("8888", b.Rate, done)
+
+			proxyURL, _ := url.Parse("http://127.0.0.1:8888")
 			client := &http.Client{Transport: &http.Transport{Proxy: http.ProxyURL(proxyURL)}}
 			response, err := client.Get("http://127.0.0.1:8080/goforward.exe")
+
+			if err != nil {
+				t.Errorf(err.Error())
+			}
 
 			defer response.Body.Close()
 
@@ -48,17 +58,20 @@ func TestBenchmarks(t *testing.T) {
 
 			duration := time.Since(start)
 
+			done <- true
+
 			if err != nil {
 				t.Errorf(err.Error())
 			}
 
 			if duration.Seconds() > b.DurationMax {
-				t.Errorf("Exceded duration.")
+				t.Errorf("Too slow.")
 			}
 
 			if duration.Seconds() < b.DurationMin {
-				t.Errorf("Finished early.")
+				t.Errorf("Too fast.")
 			}
+
 		}
 	})
 }
