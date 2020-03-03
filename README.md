@@ -1,6 +1,6 @@
 # Goforward
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/jamesmoriarty/goforward)](https://goreportcard.com/report/github.com/jamesmoriarty/goforward)
+[![Latest Tag][2]][3] [![Go Report Card][4]][5] [![GitHub Workflow Status][6]][7]
 
 Go forward proxy with rate limiting.
 
@@ -51,3 +51,9 @@ ok      github.com/jamesmoriarty/goforward      14.042s
 ```
 
 [1]: docs/screenshot.PNG
+[2]: https://img.shields.io/github/v/tag/jamesmoriarty/goforward.svg?logo=github&label=latest
+[3]: https://github.com/jamesmoriarty/goforward/releases
+[4]: https://goreportcard.com/badge/github.com/jamesmoriarty/goforward
+[5]: https://goreportcard.com/report/github.com/jamesmoriarty/goforward
+[6]: https://img.shields.io/github/workflow/status/jamesmoriarty/goforward/Release
+[7]: https://github.com/jamesmoriarty/goforward/actions?query=workflow%3ARelease
