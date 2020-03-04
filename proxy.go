@@ -19,12 +19,13 @@ import (
 func handleTunneling(w http.ResponseWriter, r *http.Request, bucket *ratelimit.Bucket) {
 	conn, err := net.DialTimeout("tcp", r.Host, 10*time.Second)
 
-	destConn := RateLimitedConn{conn, bucket}
-
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusServiceUnavailable)
 		return
 	}
+
+	destConn := RateLimitedConn{conn, bucket}
+
 	w.WriteHeader(http.StatusOK)
 
 	hijacker, ok := w.(http.Hijacker)
@@ -64,17 +65,23 @@ func transfer(destination io.WriteCloser, source io.ReadCloser) {
 }
 
 func handleHTTP(w http.ResponseWriter, req *http.Request, bucket *ratelimit.Bucket) {
-	dialer := &net.Dialer{}
+	transport := &http.Transport{
+		DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
+			dialer := &net.Dialer{
+				Timeout:   3 * time.Second,
+				KeepAlive: 3 * time.Second,
+				DualStack: true,
+			}
+			conn, err := dialer.DialContext(ctx, network, addr)
 
-	http.DefaultTransport.(*http.Transport).DialContext = func(ctx context.Context, network, addr string) (net.Conn, error) {
-		conn, err := dialer.DialContext(ctx, network, addr)
-
-		return RateLimitedConn{conn, bucket}, err
+			return RateLimitedConn{conn, bucket}, err
+		},
 	}
 
-	resp, err := http.DefaultTransport.RoundTrip(req)
+	resp, err := transport.RoundTrip(req)
 
 	if err != nil {
+		log.Warn(err.Error())
 		http.Error(w, err.Error(), http.StatusServiceUnavailable)
 		return
 	}
@@ -117,7 +124,7 @@ func proxy(port string, rate int, done <-chan bool) {
 
 	<-done
 
-	log.Info("Exiting Goforward")
+	log.Info("Goforward Exiting ")
 
 	server.Close()
 }
