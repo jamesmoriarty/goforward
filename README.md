@@ -20,17 +20,19 @@ go install github.com/jamesmoriarty/goforward
 # Usage
 
 ```
-.\goforward.exe
+goforward
 ```
 
 ```
-.\goforward.exe -h
-Usage of .\goforward.exe:
+goforward -h
+Usage of goforward:
   -port string
-        Proxy listen port (default "8888")
+        Proxy listen port (default "8888")g
   -rate int
         Proxy bandwidth ratelimit (default 524288)
 ```
+
+use with `.exe` on windows.
 
 # Build 
 
