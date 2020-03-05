@@ -1,8 +1,6 @@
 package main
 
-// Credit to @mlowicki.
-//
-// https://medium.com/t/@mlowicki/http-s-proxy-in-golang-in-less-than-100-lines-of-code-6a51c2f2c38c
+// Credit to https://medium.com/t/@mlowicki/http-s-proxy-in-golang-in-less-than-100-lines-of-code-6a51c2f2c38c
 
 import (
 	"code.cloudfoundry.org/bytefmt"
@@ -81,7 +79,6 @@ func handleHTTP(w http.ResponseWriter, req *http.Request, bucket *ratelimit.Buck
 	resp, err := transport.RoundTrip(req)
 
 	if err != nil {
-		log.Warn(err.Error())
 		http.Error(w, err.Error(), http.StatusServiceUnavailable)
 		return
 	}
@@ -124,7 +121,7 @@ func proxy(port string, rate int, done <-chan bool) {
 
 	<-done
 
-	log.Info("Goforward Exiting ")
+	log.Info("Goforward Exiting")
 
-	server.Close()
+	server.Shutdown(context.Background())
 }

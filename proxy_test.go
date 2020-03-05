@@ -30,10 +30,21 @@ type benchmark struct {
 func TestBenchmarks(t *testing.T) {
 	benchmarks := []benchmark{
 		{
+			Rate:        2048 * 1024,
+			DurationMin: 2,
+			DurationMax: 4,
+		},
+		{
+			Rate:        1024 * 1024,
+			DurationMin: 6,
+			DurationMax: 7,
+		},
+		{
 			Rate:        512 * 1024,
 			DurationMin: 12,
 			DurationMax: 14,
 		},
+
 	}
 
 	withStubHTTPServer("8080", ".", func() {
@@ -58,8 +69,6 @@ func TestBenchmarks(t *testing.T) {
 
 			duration := time.Since(start)
 
-			done <- true
-
 			if err != nil {
 				t.Errorf(err.Error())
 			}
@@ -72,6 +81,9 @@ func TestBenchmarks(t *testing.T) {
 				t.Errorf("Too fast.")
 			}
 
+			done <- true
+
+			time.Sleep(3)
 		}
 	})
 }
