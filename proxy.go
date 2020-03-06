@@ -59,7 +59,7 @@ func transfer(destination io.WriteCloser, source io.ReadCloser) {
 	defer destination.Close()
 	defer source.Close()
 
-	copyWithLog(destination, source, "Transfered")
+	copyWithLog(destination, source, "Transferred")
 }
 
 func handleHTTP(w http.ResponseWriter, req *http.Request, bucket *ratelimit.Bucket) {
