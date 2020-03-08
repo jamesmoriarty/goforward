@@ -68,7 +68,7 @@ Shape the traffic in kernal space.
 
 ## Third Solution
 
-Shape the traffic outside the application in user space by utilizing a forward proxy.
+Shape the traffic in user space.
 
 [![Forward Proxy][11]][11]
 
