@@ -48,10 +48,10 @@ go test
 
 # Why
 
-Reasons being:
+I needed a way to download 53GB without making my household internet unusable. In summary:
 
 1. [Free games](https://www.pcgamer.com/au/faeria-is-the-next-free-epic-game-store-game-kingdom-come-deliverance-and-aztez-are-available-now/).
-2. [Australia's terrible internet speed](https://en.wikipedia.org/wiki/List_of_countries_by_Internet_connection_speeds).
+2. [Australia's terrible internet](https://en.wikipedia.org/wiki/List_of_countries_by_Internet_connection_speeds).
 3. [Learning Go](https://golang.org/).
 
 ## First Solution
