@@ -2,7 +2,7 @@
 
 [![Latest Tag][2]][3] [![Go Report Card][4]][5] [![GitHub Workflow Status][6]][7]
 
-Go forward proxy with rate limiting.
+Go forward proxy with rate limiting. Credit to [Michał Łowicki][8] for his 100 LOC forward proxy server this is based on.
 
 ![Screenshot][1]
 
@@ -61,3 +61,4 @@ ok      github.com/jamesmoriarty/goforward      14.042s
 [5]: https://goreportcard.com/report/github.com/jamesmoriarty/goforward
 [6]: https://img.shields.io/github/workflow/status/jamesmoriarty/goforward/Release
 [7]: https://github.com/jamesmoriarty/goforward/actions?query=workflow%3ARelease
+[8]: https://github.com/mlowicki
