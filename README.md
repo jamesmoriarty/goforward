@@ -46,13 +46,31 @@ go build
 go test
 ```
 
-```
-time="2020-03-03T22:51:58+11:00" level=info msg="Goforward listening on :8888 with ratelimit 512K"
-time="2020-03-03T22:51:59+11:00" level=info msg="http://127.0.0.1:8080/goforward.exe" Method=GET RemoteAddr="127.0.0.1:63286"
-time="2020-03-03T22:52:12+11:00" level=info msg="http://127.0.0.1:8080/goforward.exe" Duration=13.2338348s Rate=550.7K/s Size=7.1M
-PASS
-ok      github.com/jamesmoriarty/goforward      14.042s
-```
+# Why
+
+Reasons being:
+
+1. [Free games](https://www.pcgamer.com/au/faeria-is-the-next-free-epic-game-store-game-kingdom-come-deliverance-and-aztez-are-available-now/).
+2. [Australia's terrible internet speed](https://en.wikipedia.org/wiki/List_of_countries_by_Internet_connection_speeds).
+3. [Learning Go](https://golang.org/).
+
+## First Solution
+
+Shape the traffic in the application.
+
+[![Application Bandwidth Shaping][9]][9]
+
+## Second Solution
+
+Shape the traffic in kernal space.
+
+[![Windows Filtering Platform][10]][10]
+
+## Third Solution
+
+Shape the traffic outside the application in user space by utilizing a forward proxy.
+
+[![Forward Proxy][11]][11]
 
 [1]: docs/screenshot.PNG
 [2]: https://img.shields.io/github/v/tag/jamesmoriarty/goforward.svg?logo=github&label=latest
@@ -62,3 +80,6 @@ ok      github.com/jamesmoriarty/goforward      14.042s
 [6]: https://img.shields.io/github/workflow/status/jamesmoriarty/goforward/Release
 [7]: https://github.com/jamesmoriarty/goforward/actions?query=workflow%3ARelease
 [8]: https://github.com/mlowicki
+[9]: docs/diagram-1.png
+[10]: docs/diagram-2.png
+[11]: docs/diagram-3.png
