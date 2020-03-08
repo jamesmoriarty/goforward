@@ -2,7 +2,7 @@
 
 [![Latest Tag][2]][3] [![Go Report Card][4]][5] [![GitHub Workflow Status][6]][7]
 
-Go forward proxy with rate limiting. Credit to [Michał Łowicki][8] for his 100 LOC forward proxy server this is based on.
+Go forward proxy with rate limiting. The code is based on [Michał Łowicki's][8] 100 LOC forward proxy.
 
 ![Screenshot][1]
 
