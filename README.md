@@ -83,4 +83,4 @@ Shape the traffic in user space.
 [9]: docs/diagram-1.png
 [10]: docs/diagram-2.png
 [11]: docs/diagram-3.png
-[12]: https://img.shields.io/github/downloads/jamesmoriarty/goforward/latest/total
+[12]: https://img.shields.io/github/downloads/jamesmoriarty/goforward/total
