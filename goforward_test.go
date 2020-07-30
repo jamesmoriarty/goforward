@@ -1,4 +1,4 @@
-package main
+package goforward
 
 import (
 	"io/ioutil"
@@ -51,7 +51,7 @@ func TestBenchmarks(t *testing.T) {
 		done := make(chan bool, 1)
 
 		for _, b := range benchmarks {
-			go proxy("8888", b.Rate, done)
+			go Listen("8888", b.Rate, done)
 
 			proxyURL, _ := url.Parse("http://127.0.0.1:8888")
 			client := &http.Client{Transport: &http.Transport{Proxy: http.ProxyURL(proxyURL)}}

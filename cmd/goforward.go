@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/jamesmoriarty/goforward"
 	log "github.com/sirupsen/logrus"
 	"os"
 	"os/signal"
@@ -20,9 +21,9 @@ func main() {
 	flag.Parse()
 
 	done := make(chan bool, 1)
-	go proxy(port, rate, done)
 
-	// Block until signal and exit
+	go goforward.Listen(port, rate, done)
+
 	sigc := make(chan os.Signal, 1)
 	signal.Notify(sigc, syscall.SIGINT, syscall.SIGTERM)
 	<-sigc

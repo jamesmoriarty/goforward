@@ -34,10 +34,10 @@ Usage of goforward:
 
 use with `.exe` on windows.
 
-# Build 
+# Build
 
 ```
-go build
+go build .\cmd\goforward.go
 ```
 
 # Test

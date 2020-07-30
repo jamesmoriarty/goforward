@@ -1,4 +1,4 @@
-package main
+package goforward
 
 import (
 	"code.cloudfoundry.org/bytefmt"
@@ -11,6 +11,25 @@ import (
 	"net/http"
 	"time"
 )
+
+type RateLimitedConn struct {
+	net.Conn
+	*ratelimit.Bucket
+}
+
+func (wrap RateLimitedConn) Read(b []byte) (n int, err error) {
+	written, err := wrap.Conn.Read(b)
+
+	wrap.Bucket.Wait(int64(written))
+
+	return written, err
+}
+
+func (wrap RateLimitedConn) Write(b []byte) (n int, err error) {
+	wrap.Bucket.Wait(int64(len(b)))
+
+	return wrap.Conn.Write(b)
+}
 
 func handleTunneling(w http.ResponseWriter, r *http.Request, bucket *ratelimit.Bucket) {
 	conn, err := net.DialTimeout("tcp", r.Host, 10*time.Second)
@@ -95,7 +114,7 @@ func copyHeader(dst, src http.Header) {
 	}
 }
 
-func proxy(port string, rate int, done <-chan bool) {
+func Listen(port string, rate int, done <-chan bool) {
 	log.Info("Goforward listening on :" + port + " with ratelimit " + bytefmt.ByteSize(uint64(rate)))
 
 	bucket := ratelimit.NewBucketWithRate(float64(rate), int64(rate))
