@@ -20,12 +20,14 @@ func main() {
 
 	flag.Parse()
 
-	done := make(chan bool, 1)
+	shutdown := make(chan bool, 1)
 
-	go goforward.Listen(port, rate, done)
+	go goforward.Listen(port, rate, shutdown)
 
-	sigc := make(chan os.Signal, 1)
-	signal.Notify(sigc, syscall.SIGINT, syscall.SIGTERM)
-	<-sigc
-	done <- true
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
+
+	<-c
+
+	shutdown <- true
 }
