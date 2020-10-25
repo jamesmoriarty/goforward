@@ -1,14 +1,30 @@
 package goforward
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"testing"
 	"time"
 )
 
-func withStubHTTPServer(port string, directory string, f func()) {
+func bytes(path string) int {
+	f, err := os.Open(path)
+	defer f.Close()
+	if err != nil {
+		panic(err)
+	}
+	info, err := f.Stat()
+	if err != nil {
+		panic(err)
+	}
+
+	return (int)(info.Size())
+}
+
+func with(port string, directory string, f func()) {
 	server := &http.Server{
 		Addr:    ":" + port,
 		Handler: http.FileServer(http.Dir(directory)),
@@ -30,24 +46,14 @@ type benchmark struct {
 func TestBenchmarks(t *testing.T) {
 	benchmarks := []benchmark{
 		{
-			Rate:        2048 * 1024,
-			DurationMin: 2,
-			DurationMax: 4,
+			Rate: 512 * 1024,
 		},
 		{
-			Rate:        1024 * 1024,
-			DurationMin: 6,
-			DurationMax: 7,
+			Rate: 256 * 1024,
 		},
-		{
-			Rate:        512 * 1024,
-			DurationMin: 12,
-			DurationMax: 14,
-		},
-
 	}
 
-	withStubHTTPServer("8080", ".", func() {
+	with("8080", ".", func() {
 		shutdown := make(chan bool, 1)
 
 		for _, b := range benchmarks {
@@ -73,12 +79,16 @@ func TestBenchmarks(t *testing.T) {
 				t.Errorf(err.Error())
 			}
 
-			if duration.Seconds() > b.DurationMax {
-				t.Errorf("Too slow.")
+			DurationExpected := (float64)(bytes("./goforward.exe") / b.Rate)
+
+			fmt.Printf("for %v@%v took %v expected %v\n", bytes("./goforward.exe")/1024, b.Rate/1024, duration.Seconds(), DurationExpected)
+
+			if duration.Seconds() > (DurationExpected * 1.2) {
+				t.Errorf("for %v@%v took %v expected <%v", bytes("./goforward.exe")/1024, b.Rate/1024, duration.Seconds(), DurationExpected)
 			}
 
-			if duration.Seconds() < b.DurationMin {
-				t.Errorf("Too fast.")
+			if duration.Seconds() < (DurationExpected * 0.8) {
+				t.Errorf("for %v@%v took %v expected >%v", bytes("./goforward.exe")/1024, b.Rate/1024, duration.Seconds(), DurationExpected)
 			}
 
 			shutdown <- true
