@@ -14,7 +14,6 @@ func main() {
 
 	var port string
 	flag.StringVar(&port, "port", "8888", "Proxy listen port")
-
 	var rate int
 	flag.IntVar(&rate, "rate", 512*1024, "Proxy bandwidth ratelimit")
 
@@ -24,10 +23,10 @@ func main() {
 
 	go goforward.Listen(port, rate, shutdown)
 
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
+	wait := make(chan os.Signal, 1)
+	signal.Notify(wait, syscall.SIGINT, syscall.SIGTERM)
 
-	<-c
+	<-wait
 
 	shutdown <- true
 }
