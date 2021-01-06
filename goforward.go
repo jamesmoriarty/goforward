@@ -9,6 +9,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -114,7 +115,7 @@ func copyHeader(dst, src http.Header) {
 	}
 }
 
-func Listen(port string, rate int, shutdown <-chan bool) {
+func Listen(port string, rate int, shutdown <-chan os.Signal) {
 	log.Info("Goforward listening on :" + port + " with ratelimit " + bytefmt.ByteSize(uint64(rate)))
 
 	bucket := ratelimit.NewBucketWithRate(float64(rate), int64(rate))
