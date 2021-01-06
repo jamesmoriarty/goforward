@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"syscall"
 	"testing"
 	"time"
 )
@@ -54,14 +55,15 @@ func TestBenchmarks(t *testing.T) {
 	}
 
 	with("8080", ".", func() {
-		shutdown := make(chan bool, 1)
+		shutdown := make(chan os.Signal, 1)
 
 		for _, b := range benchmarks {
 			go Listen("8888", b.Rate, shutdown)
 
+			fileName := "goforward.exe"
 			proxyURL, _ := url.Parse("http://127.0.0.1:8888")
 			client := &http.Client{Transport: &http.Transport{Proxy: http.ProxyURL(proxyURL)}}
-			response, err := client.Get("http://127.0.0.1:8080/goforward.exe")
+			response, err := client.Get("http://127.0.0.1:8080/" + fileName)
 
 			if err != nil {
 				t.Errorf(err.Error())
@@ -79,19 +81,19 @@ func TestBenchmarks(t *testing.T) {
 				t.Errorf(err.Error())
 			}
 
-			DurationExpected := (float64)(bytes("./goforward.exe") / b.Rate)
+			DurationExpected := (float64)(bytes("./"+fileName) / b.Rate)
 
-			fmt.Printf("for %v@%v took %v expected %v\n", bytes("./goforward.exe")/1024, b.Rate/1024, duration.Seconds(), DurationExpected)
+			fmt.Printf("for %v@%v took %v expected %v\n", bytes("./"+fileName)/1024, b.Rate/1024, duration.Seconds(), DurationExpected)
 
 			if duration.Seconds() > (DurationExpected * 1.2) {
-				t.Errorf("for %v@%v took %v expected <%v", bytes("./goforward.exe")/1024, b.Rate/1024, duration.Seconds(), DurationExpected)
+				t.Errorf("for %v@%v took %v expected <%v", bytes("./"+fileName)/1024, b.Rate/1024, duration.Seconds(), DurationExpected)
 			}
 
 			if duration.Seconds() < (DurationExpected * 0.8) {
-				t.Errorf("for %v@%v took %v expected >%v", bytes("./goforward.exe")/1024, b.Rate/1024, duration.Seconds(), DurationExpected)
+				t.Errorf("for %v@%v took %v expected >%v", bytes("./"+fileName)/1024, b.Rate/1024, duration.Seconds(), DurationExpected)
 			}
 
-			shutdown <- true
+			shutdown <- syscall.SIGKILL
 
 			time.Sleep(3)
 		}

@@ -19,14 +19,8 @@ func main() {
 
 	flag.Parse()
 
-	shutdown := make(chan bool, 1)
-
+	shutdown := make(chan os.Signal, 1)
+	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
 	go goforward.Listen(port, rate, shutdown)
-
-	wait := make(chan os.Signal, 1)
-	signal.Notify(wait, syscall.SIGINT, syscall.SIGTERM)
-
-	<-wait
-
-	shutdown <- true
+	<-shutdown
 }
